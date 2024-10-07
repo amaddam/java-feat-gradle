@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Random;
 
 /**
  * @author : lrns1
@@ -20,6 +21,11 @@ public class SnakePanel extends JPanel implements KeyListener, ActionListener {
     //常量
     //蛇的每格大小
     private static final int CELL_SIZE = 25;
+    //游戏面板的格子数, 纵向24个, 横向34个
+    private static final int ROWS = 24;
+    private static final int COLS = 34;
+    //食物的生成器
+    private static final Random RANDOM = new Random();
     //定义蛇的长度
     private int length;
     //定义蛇的x坐标, 蛇头的x坐标在snakeX[0], 蛇身体的x坐标在snakeX[1], snakeX[2]...
@@ -32,6 +38,10 @@ public class SnakePanel extends JPanel implements KeyListener, ActionListener {
     private boolean isStart = false;
     //定时器, 100ms执行一次
     private Timer timer = new Timer(100, this);
+    //食物的x坐标
+    private int foodX;
+    //食物的y坐标
+    private int foodY;
 
     public SnakePanel() {
         //初始化
@@ -56,6 +66,9 @@ public class SnakePanel extends JPanel implements KeyListener, ActionListener {
         snakeY[2] = 95 + 25;
         //初始化方向
         direction = "R";
+        //初始化食物的坐标
+        foodX = 25 + 25 * RANDOM.nextInt(34);
+        foodY = 95 + 25 * RANDOM.nextInt(24);
         //初始化定时器
         timer.start();
     }
@@ -86,8 +99,12 @@ public class SnakePanel extends JPanel implements KeyListener, ActionListener {
                 SnakeData.SNAKE_HEAD_RIGHT_ICON.paintIcon(this, g, snakeX[0], snakeY[0]);
                 break;
         }
-        SnakeData.SNAKE_BODY_ICON.paintIcon(this, g, snakeX[1], snakeY[1]);
-        SnakeData.SNAKE_BODY_ICON.paintIcon(this, g, snakeX[2], snakeY[2]);
+        //画蛇的身体
+        for (int i = 1; i < length; i++) {
+            SnakeData.SNAKE_BODY_ICON.paintIcon(this, g, snakeX[i], snakeY[i]);
+        }
+        //画食物
+        SnakeData.FOOD_ICON.paintIcon(this, g, foodX, foodY);
         //游戏是否开始
         if (!isStart) {
             //画一个文字, 提示用户按下空格键开始游戏
@@ -144,6 +161,17 @@ public class SnakePanel extends JPanel implements KeyListener, ActionListener {
             //重新绘制界面
             repaint();
         }
+
+        //键盘控制走向
+        if (keyCode == KeyEvent.VK_UP) {
+            direction = "U";
+        } else if (keyCode == KeyEvent.VK_DOWN) {
+            direction = "D";
+        } else if (keyCode == KeyEvent.VK_LEFT) {
+            direction = "L";
+        } else if (keyCode == KeyEvent.VK_RIGHT) {
+            direction = "R";
+        }
     }
 
     //当释放键盘上的任意键时，调用 keyReleased() 方法
@@ -158,7 +186,15 @@ public class SnakePanel extends JPanel implements KeyListener, ActionListener {
     public void actionPerformed(ActionEvent e) {
         //判断游戏是否开始
         if (isStart) {
-            //右移动, 有几节身体就移动几次, 后面的身体移动到前面的身体的位置
+            //吃食物, 如果蛇头的坐标和食物的坐标重合, 则吃掉食物, 这里加了长度之后, 后面的身体会自动加长
+            if (snakeX[0] == foodX && snakeY[0] == foodY) {
+                //蛇的长度加1
+                length++;
+                //重新生成食物
+                foodX = 25 + 25 * RANDOM.nextInt(34);
+                foodY = 95 + 25 * RANDOM.nextInt(24);
+            }
+            //移动, 有几节身体就移动几次, 后面的身体移动到前面的身体的位置
             for (int i = length - 1; i > 0; i--) {
                 snakeX[i] = snakeX[i - 1];
                 snakeY[i] = snakeY[i - 1];
@@ -167,20 +203,32 @@ public class SnakePanel extends JPanel implements KeyListener, ActionListener {
             switch (direction) {
                 case "U":
                     snakeY[0] -= CELL_SIZE;
+                    //向上移动, 如果蛇的头部超出边界, 则从另一边出来
+                    if (snakeY[0] < 95) {
+                        snakeY[0] = 95 + 600 - CELL_SIZE;
+                    }
                     break;
                 case "D":
                     snakeY[0] += CELL_SIZE;
+                    //向下移动, 如果蛇的头部超出边界, 则从另一边出来
+                    if (snakeY[0] > 95 + 600 - CELL_SIZE) {
+                        snakeY[0] = 95;
+                    }
                     break;
                 case "L":
                     snakeX[0] -= CELL_SIZE;
+                    //向左移动, 如果蛇的头部超出边界, 则从另一边出来
+                    if (snakeX[0] < 25) {
+                        snakeX[0] = 850;
+                    }
                     break;
                 case "R":
                     snakeX[0] += CELL_SIZE;
+                    //向右移动, 如果蛇的头部超出边界, 则从另一边出来
+                    if (snakeX[0] > 850) {
+                        snakeX[0] = 25;
+                    }
                     break;
-            }
-            //边界判断, 如果蛇的头部超出边界, 则从另一边出来
-            if (snakeX[0] > 850) {
-                snakeX[0] = 25;
             }
             //重新绘制界面
             repaint();
