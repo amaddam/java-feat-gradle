@@ -21,17 +21,17 @@ public class SnakeData {
 
     //蛇头上
     private static final URL SNAKE_HEAD_UP = SnakeData.class.getResource("/snake/snake_header_up.png");
-    private static final ImageIcon SNAKE_HEAD_UP_ICON = new ImageIcon(
+    public static final ImageIcon SNAKE_HEAD_UP_ICON = new ImageIcon(
                     Toolkit.getDefaultToolkit().getImage(SNAKE_HEAD_UP).getScaledInstance(cellSize, cellSize, Image.SCALE_SMOOTH)
     );
     //蛇头下
     private static final URL SNAKE_HEAD_DOWN = SnakeData.class.getResource("/snake/snake_header_down.png");
-    private static final ImageIcon SNAKE_HEAD_DOWN_ICON = new ImageIcon(
+    public static final ImageIcon SNAKE_HEAD_DOWN_ICON = new ImageIcon(
                     Toolkit.getDefaultToolkit().getImage(SNAKE_HEAD_DOWN).getScaledInstance(cellSize, cellSize, Image.SCALE_SMOOTH)
     );
     //蛇头左
     private static final URL SNAKE_HEAD_LEFT = SnakeData.class.getResource("/snake/snake_header_left.png");
-    private static final ImageIcon SNAKE_HEAD_LEFT_ICON = new ImageIcon(
+    public static final ImageIcon SNAKE_HEAD_LEFT_ICON = new ImageIcon(
                     Toolkit.getDefaultToolkit().getImage(SNAKE_HEAD_LEFT).getScaledInstance(cellSize, cellSize, Image.SCALE_SMOOTH)
     );
     //蛇头右
