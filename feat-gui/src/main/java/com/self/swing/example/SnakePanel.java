@@ -16,9 +16,17 @@ import java.util.Random;
  * 继承JPanel, 重写paintComponent方法, 画出游戏界面
  * 实现KeyListener接口, 监听键盘事件
  * 实现ActionListener接口, 监听定时器事件
+ * 流程大概是这样的:
+ * 1. 定义数据
+ * 2. 画上去
+ * 3. 监听事件
+ * 3.1 键盘事件
+ * 3.2 定时器事件
  */
 public class SnakePanel extends JPanel implements KeyListener, ActionListener {
     //常量
+    //字体
+    private static final Font MICROSOFT_YA_HEI = new Font("Microsoft YaHei", Font.BOLD, 40);
     //蛇的每格大小
     private static final int CELL_SIZE = 25;
     //游戏面板的格子数, 纵向24个, 横向34个
@@ -29,19 +37,21 @@ public class SnakePanel extends JPanel implements KeyListener, ActionListener {
     //定义蛇的长度
     private int length;
     //定义蛇的x坐标, 蛇头的x坐标在snakeX[0], 蛇身体的x坐标在snakeX[1], snakeX[2]...
-    private int[] snakeX = new int[600];//25*25, 600个格子完全够用
+    private final int[] snakeX = new int[600];//25*25, 600个格子完全够用
     //定义蛇的y坐标, 蛇头的y坐标在snakeY[0], 蛇身体的y坐标在snakeY[1], snakeY[2]...
-    private int[] snakeY = new int[500]; //25*25, 500个格子完全够用
+    private final int[] snakeY = new int[500]; //25*25, 500个格子完全够用
     //蛇的方向
     private String direction;//U D L R
     //游戏是否开始
     private boolean isStart = false;
     //定时器, 100ms执行一次
-    private Timer timer = new Timer(100, this);
+    private final Timer timer = new Timer(100, this);
     //食物的x坐标
     private int foodX;
     //食物的y坐标
     private int foodY;
+    //是否失败
+    private boolean isFail = false;
 
     public SnakePanel() {
         //初始化
@@ -84,6 +94,8 @@ public class SnakePanel extends JPanel implements KeyListener, ActionListener {
         this.setBackground(Color.WHITE);
         //绘制静态面板
         setAdvertisementsSize(g, panelWidth, panelHeight);
+        //画食物, 先画食物, 后画蛇, 这样确保蛇头可以覆盖食物
+        SnakeData.FOOD_ICON.paintIcon(this, g, foodX, foodY);
         //把小蛇画上去, 蛇头初始化的时候是向右的, 两截身体
         switch (direction) {
             case "U":
@@ -103,15 +115,35 @@ public class SnakePanel extends JPanel implements KeyListener, ActionListener {
         for (int i = 1; i < length; i++) {
             SnakeData.SNAKE_BODY_ICON.paintIcon(this, g, snakeX[i], snakeY[i]);
         }
-        //画食物
-        SnakeData.FOOD_ICON.paintIcon(this, g, foodX, foodY);
         //游戏是否开始
         if (!isStart) {
             //画一个文字, 提示用户按下空格键开始游戏
-            g.setColor(Color.WHITE);
-            g.setFont(new Font("微软雅黑", Font.BOLD, 40));
-            g.drawString("按下空格键开始游戏", 300, 300);
+            String message = "按下空格键开始游戏";
+            setTips(g, Color.WHITE, MICROSOFT_YA_HEI, message);
         }
+        //游戏失败
+        if (isFail) {
+            //画一个文字, 提示用户按下空格键重新开始游戏
+            String message = "游戏失败, 按下空格键重新开始游戏";
+            setTips(g, Color.RED, MICROSOFT_YA_HEI, message);
+        }
+    }
+
+    private void setTips(Graphics g, Color color, Font font, String message) {
+        g.setColor(color);
+        g.setFont(font);
+
+        // 获取 FontMetrics 对象
+        FontMetrics metrics = g.getFontMetrics();
+        // 计算文本的宽度和高度
+        int textWidth = metrics.stringWidth(message);
+        int textHeight = metrics.getHeight();
+        // 计算文本的起始坐标，使其居中
+        int x = (this.getWidth() - textWidth) / 2;  // 水平居中
+        int y = (this.getHeight() - textHeight) / 2 + textHeight; // 垂直居中
+
+        // 绘制文本
+        g.drawString(message, x, y);
     }
 
     private void setAdvertisementsSize(Graphics g, int panelWidth, int panelHeight) {
@@ -157,7 +189,16 @@ public class SnakePanel extends JPanel implements KeyListener, ActionListener {
         int keyCode = e.getKeyCode();
         System.out.println("keyPressed keyCode = " + keyCode);
         if (keyCode == KeyEvent.VK_SPACE) {
-            isStart = !isStart;
+            //判断是否失败
+            if (isFail) {
+                //重新开始游戏
+                isFail = false;
+                //!重新初始化
+                init();
+            } else {
+                //游戏是否开始
+                isStart = !isStart;
+            }
             //重新绘制界面
             repaint();
         }
@@ -185,7 +226,7 @@ public class SnakePanel extends JPanel implements KeyListener, ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         //判断游戏是否开始
-        if (isStart) {
+        if (isStart && !isFail) {
             //吃食物, 如果蛇头的坐标和食物的坐标重合, 则吃掉食物, 这里加了长度之后, 后面的身体会自动加长
             if (snakeX[0] == foodX && snakeY[0] == foodY) {
                 //蛇的长度加1
@@ -229,6 +270,12 @@ public class SnakePanel extends JPanel implements KeyListener, ActionListener {
                         snakeX[0] = 25;
                     }
                     break;
+            }
+            //判断是否失败, 如果蛇头和身体重合, 则失败
+            for (int i = 1; i < length; i++) {
+                if (snakeX[0] == snakeX[i] && snakeY[0] == snakeY[i]) {
+                    isFail = true;
+                }
             }
             //重新绘制界面
             repaint();
