@@ -52,6 +52,8 @@ public class SnakePanel extends JPanel implements KeyListener, ActionListener {
     private int foodY;
     //是否失败
     private boolean isFail = false;
+    //添加成绩
+    private int score = 0;
 
     public SnakePanel() {
         //初始化
@@ -94,6 +96,13 @@ public class SnakePanel extends JPanel implements KeyListener, ActionListener {
         this.setBackground(Color.WHITE);
         //绘制静态面板
         setAdvertisementsSize(g, panelWidth, panelHeight);
+        //画分数
+        g.setColor(Color.BLUE);
+        g.setFont(MICROSOFT_YA_HEI.deriveFont(18.0f));
+        g.drawString("长度: " + length, 750, 30);
+        g.drawString("分数: " + score, 750, 65);
+
+
         //画食物, 先画食物, 后画蛇, 这样确保蛇头可以覆盖食物
         SnakeData.FOOD_ICON.paintIcon(this, g, foodX, foodY);
         //把小蛇画上去, 蛇头初始化的时候是向右的, 两截身体
@@ -129,6 +138,7 @@ public class SnakePanel extends JPanel implements KeyListener, ActionListener {
         }
     }
 
+    //居中显示文字
     private void setTips(Graphics g, Color color, Font font, String message) {
         g.setColor(color);
         g.setFont(font);
@@ -231,6 +241,8 @@ public class SnakePanel extends JPanel implements KeyListener, ActionListener {
             if (snakeX[0] == foodX && snakeY[0] == foodY) {
                 //蛇的长度加1
                 length++;
+                //分数加10
+                score += 10;
                 //重新生成食物
                 foodX = 25 + 25 * RANDOM.nextInt(34);
                 foodY = 95 + 25 * RANDOM.nextInt(24);
