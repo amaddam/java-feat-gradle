@@ -4,12 +4,14 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
+        <option name="delegatedBuild" value="false" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="gradleHome" value="$PROJECT_DIR$/../../../Gradle/gradle-8.5" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/feat-gui" />
+            <option value="$PROJECT_DIR$/feat-gui/feat-gui-idea" />
             <option value="$PROJECT_DIR$/feat-record" />
             <option value="$PROJECT_DIR$/feat-socket" />
           </set>
