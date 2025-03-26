@@ -48,6 +48,10 @@ public record RecordVO(String name, Integer age) {
 
 
     //record中不可以添加实例字段和实例代码块
+    // private Object instanceField;
+    // {
+    //     instanceField = new Object();
+    // }
 
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
@@ -64,7 +68,7 @@ public record RecordVO(String name, Integer age) {
 
         String json2 = "{\"innerField\":\"innerField\"}";
         try {
-            // 但是类不会就不会被序列化, 需要添加可见性, 如果不添加可见性, 就需要添加getter方法, 否则会报错, 上面已添加getter方法
+            // 但是类就不会被序列化, 需要添加可见性, 如果不添加可见性, 就需要添加getter方法, 否则会报错, 上面已添加getter方法
             // objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
             InnerClass innerClass = objectMapper.readValue(json2, InnerClass.class);
             innerClass.print();
