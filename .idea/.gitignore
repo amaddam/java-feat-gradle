@@ -9,5 +9,3 @@
 # Zeppelin ignored files
 /ZeppelinRemoteNotebooks/
 
-# idea 下的所有文件
-.idea/*
