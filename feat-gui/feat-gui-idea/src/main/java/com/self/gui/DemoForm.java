@@ -8,12 +8,6 @@ import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 
-/**
- * @author : lrns1
- * @version : 1.0
- * @date : Created in 2024/10/9
- * @description :
- */
 public class DemoForm {
     private JPanel rootPanel;
     private JPanel loginPanel;
@@ -24,12 +18,13 @@ public class DemoForm {
     public DemoForm() {
         loginButton.addActionListener(e -> {
             String username = usernameText.getText();
-            String password = passwordField.getText();
+            char[] password1 = passwordField.getPassword();
+            String password =  new String(password1);
             System.out.println("username: " + username + ", password: " + password);
         });
     }
 
-    // 生成的代码, 通过Alt+Insert -> Form main() 生成
+    // 生成的代码, idea需要安装Swing UI Designer 插件, 然后通过Alt+Insert -> Form main() 生成
     //在gradle中运行, 会报错, 提示contentPane cannot be set to null.
     //解决方法: 1(必须) 打开settings -> Build, Execution, Deployment -> Build Tools -> Gradle -> Build and run using -> IntelliJ IDEA
     //          2(可选, 如果上面那步开启还是不行的话) 在settings -> Editor -> GUI Designer -> Generate GUI into -> 选择Java source code
