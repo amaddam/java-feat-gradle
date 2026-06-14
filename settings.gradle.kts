@@ -7,3 +7,4 @@ findProject(":feat-gui:feat-gui-idea")?.name = "feat-gui-idea"
 include("feat-java-base")
 include("feat-java-base:feat-record")
 findProject(":feat-java-base:feat-record")?.name = "feat-record"
+include("feat-juc")
